@@ -235,7 +235,7 @@ void main(){
 
   vec4 hex_uv3 = getHex(uvT3 * 12.);
 
-  float hexf3 = stroke(hex(hex_uv3.xy), .1, .5 );
+  float hexf3 = stroke(hex(hex_uv3.xy * uColor.b),uColor.g, uColor.r );
 
 	float r = fill(triangleGrid(rote, 0.1 , 0.0000005,0.001), .01);
 
@@ -257,10 +257,10 @@ void main(){
   vec2 uvR = vUv - uColor.b;
   uvRipple(uvR  , uColor.r);
 
-  // uvRipple(hex_uv3.xy, 3.);
-  color.r -= texture2D(uTexture, uvT3).r;
-  color.g -= texture2D(uTexture, uvR).r;
-  color.b -= texture2D(uTexture, uvT2).r;
+  uvRipple(hex_uv3.xy, uColor.b);
+  color.r = texture2D(uTexture, uvT3).r;
+  color.g = texture2D(uTexture, uvR).r;
+  color.b = texture2D(uTexture, uvT2).r;
 
   // color.rb = brownConradyDistortion(color.rb, sin(vTime), cos(vTime));
 
@@ -274,7 +274,7 @@ void main(){
   // }
 
   color = mix(color, 1.-color, tex.r);
-  // color = mix(color, 1.-color, tri);
+  color = mix(color, 1.-color, hexf3);
 
 
  gl_FragColor =  vec4(color, 1.);

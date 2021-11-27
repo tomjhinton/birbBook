@@ -132,12 +132,21 @@ for(let i = 1; i< arr.length; i++){
 
 
 //Spine
+const wrapDiv = document.createElement('div')
+
 const canvasSpine = document.createElement('canvas')
+document.body.appendChild(canvasSpine)
+
+
+canvasSpine.parentNode.insertBefore(wrapDiv, canvasSpine)
+wrapDiv.appendChild(canvasSpine)
 canvasSpine.id = 'textBoxSpine'
 canvasSpine.width = 100
 canvasSpine.height = 100
-canvasSpine.style.display = 'none'
-document.body.appendChild(canvasSpine)
+wrapDiv.classList.add('x')
+canvasSpine.classList.add('y')
+// canvasSpine.style.position= 'absolute'
+
 
 const textTextureSpine = document.getElementById('textBoxSpine')
 let base_image = new Image(100, 100);
@@ -146,7 +155,9 @@ let ctx3 = canvasSpine.getContext('2d')
 
 
 base_image.onload = function(){
+  ctx3.scale(.5, .5);
   ctx3.drawImage(base_image, 0, 0);
+
   spineMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTextureSpine)
 }
 
@@ -214,18 +225,20 @@ document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
 
     }
   }
+
+
   arr = blurb.split('')
   backMaterial.uniforms.uColor.value.x = arr.filter(x =>{
     return x === 'r' || x === 'R'
-  }).length /arr.length * 20
+  }).length / arr.length * 20
 
   backMaterial.uniforms.uColor.value.y = arr.filter(x =>{
     return x === 'g' || x === 'G'
-  }).length /arr.length * 20
+  }).length / arr.length * 20
 
   backMaterial.uniforms.uColor.value.z = arr.filter(x =>{
     return x === 'b' || x === 'B'
-  }).length /arr.length * 20
+  }).length / arr.length * 20
 
 
 
@@ -460,7 +473,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor( 0x000000, 1.)
+renderer.setClearColor( 0x000000, .0)
 
 
 const raycaster = new THREE.Raycaster()

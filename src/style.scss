@@ -27,9 +27,8 @@
 
 
 .title{
-  font-size: 3em;
+  font-size: 4em;
   font-family: Olondona;
-  // text-align: center;
   position: absolute;
   color: rgba(256,256,256,1);
   // pointer-events: none;
@@ -137,4 +136,75 @@
   100% {
     opacity:0;
 }
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background: #000;
+  background-image: linear-gradient(rgba(0, 255, 0, .7) .1em, transparent .2em), linear-gradient(90deg, rgba(0, 255, 0, .7) .1em, transparent .1em);
+
+  background-size: 3em 3em;
+
+  // -webkit-animation: AnimationName 30s ease infinite;
+  // -moz-animation: AnimationName 30s ease infinite;
+  // animation: AnimationName 30s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-size:3em 3em }
+    50%{background-size:5em 5em}
+    100%{background-size:3em 3em }
+}
+@-moz-keyframes AnimationName {
+    0%{background-size:3em 3em }
+    50%{background-size:5em 5em}
+    100%{background-size:3em 3em }
+}
+@keyframes AnimationName {
+    0%{background-size:3em 3em }
+    50%{background-size:5em 5em}
+    100%{background-size:3em 3em }
+}
+
+
+.el {
+  width: var(--width);
+  height: var(--width);
+}
+
+$size: 50px;
+
+.x {
+  // transform: scale(0.5);
+  position: absolute;
+  z-index: -1;
+  top: 0%;
+  animation: x 26s linear infinite alternate;
+}
+
+.y {
+  // transform: scale(0.3);
+  position: absolute;
+  z-index: -1;
+  top: 0%;
+  left: 10%;
+  animation: y 14s linear infinite alternate;
+}
+
+@keyframes x {
+  100% {
+    transform: translateX( calc(100vw - #{$size}) );
+  }
+}
+
+@keyframes y {
+  100% {
+    transform: translateY( calc(100vh - #{$size}) );
+  }
 }
