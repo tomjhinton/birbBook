@@ -13,7 +13,7 @@ const txtgen = require('txtgen')
 let bookTitle = txtgen.sentence()
 let author =  txtgen.getNouns()
 
-const blurb =  txtgen.paragraph()
+let blurb =  txtgen.paragraph()
 // console.log(author[Math.floor(Math.random() * author.length)])
 
 
@@ -61,8 +61,8 @@ console.log(document.fonts)
 
 const canvasCover = document.createElement('canvas')
 canvasCover.id = 'textBoxCover'
-canvasCover.width = 1000
-canvasCover.height = 1000
+canvasCover.width = 500
+canvasCover.height = 500
 canvasCover.style.display = 'none'
 document.body.appendChild(canvasCover)
 
@@ -72,28 +72,165 @@ var ctx = canvasCover.getContext('2d')
 ctx.fillStyle = 'white'
 let font  = fonts[Math.floor(Math.random()* fonts.length)]
 
-ctx.font = `40px ${fonts[Math.floor(Math.random()* fonts.length)]}`
+ctx.font = `15px ${fonts[Math.floor(Math.random()* fonts.length)]}`
 if(font === 'Tapeworm' || font === 'ferrite'){
-  ctx.font = '40px ' + font
+  ctx.font = '15px ' + font
 }
 
-ctx.fillText(bookTitle, 400, 200)
+ctx.fillText(bookTitle, 200, 100)
 
 font = fonts[Math.floor(Math.random()* fonts.length)]
 ctx.font = `30px ${font}`
 console.log(ctx.font)
-ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 400, 400)
+
+// ctx.textAlign =  "center" ;
+// ctx.textBaseline =  "middle"
+
+
+ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 330, 400)
+
+
+
+
+
+
+
+//Blurb
+const canvasBack = document.createElement('canvas')
+canvasBack.id = 'textBoxBack'
+canvasBack.width = 1000
+canvasBack.height = 1000
+canvasBack.style.display = 'none'
+document.body.appendChild(canvasBack)
+
+const textTextureBack = document.getElementById('textBoxBack')
+
+let ctx2 = canvasBack.getContext('2d')
+ctx2.fillStyle = 'white'
+font  = fonts[Math.floor(Math.random()* fonts.length)]
+
+ctx2.font = `40px ${fonts[Math.floor(Math.random()* fonts.length)]}`
+if(font === 'Tapeworm' || font === 'ferrite'){
+  ctx2.font = '40px ' + font
+}
+// ctx2.scale(-1,1);
+let start = [400, 50]
+let arr = blurb.split(' ')
+for(let i = 1; i< arr.length; i++){
+  if(i%5 !== 0){
+    start[0]+= arr[i].length + 60
+    ctx2.fillText(arr[i], start[0], start[1])
+
+  }
+  if(i%5 === 0){
+    start[0]=400
+    start[1] +=40
+    ctx2.fillText(arr[i], start[0], start[1])
+
+  }
+}
+
+
+//Spine
+const canvasSpine = document.createElement('canvas')
+canvasSpine.id = 'textBoxSpine'
+canvasSpine.width = 100
+canvasSpine.height = 100
+canvasSpine.style.display = 'none'
+document.body.appendChild(canvasSpine)
+
+const textTextureSpine = document.getElementById('textBoxSpine')
+let base_image = new Image(100, 100);
+base_image.src = './birb.png';
+let ctx3 = canvasSpine.getContext('2d')
+
+
+base_image.onload = function(){
+  ctx3.drawImage(base_image, 0, 0);
+  spineMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTextureSpine)
+}
+
+
+
+
 
 document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
   bookTitle = txtgen.sentence()
   author =  txtgen.getNouns()
+  ctx.clearRect(0, 0, 1000, 1000)
+  font = fonts[Math.floor(Math.random()* fonts.length)]
+
+  coverMaterial.uniforms.uColor.value.x = bookTitle.split('').filter(x =>{
+    return x === 'r' || x === 'R'
+  }).length /bookTitle.length * 10.
+
+  coverMaterial.uniforms.uColor.value.y = bookTitle.split('').filter(x =>{
+    return x === 'g' || x === 'G'
+  }).length /bookTitle.length * 10.
+
+  coverMaterial.uniforms.uColor.value.z = bookTitle.split('').filter(x =>{
+    return x === 'b' || x === 'B'
+  }).length /bookTitle.length * 10.
+  console.log('cover ' + coverMaterial.uniforms.uColor)
+  start = [100, 50]
+  arr = bookTitle.split(' ')
+  ctx.font = `30px ${font}`;
+  console.log(ctx.font)
+  for(let i = 0; i< arr.length; i++){
+    if(i%5 !== 0){
+      start[0]+= 70 +arr[i-1].length
+      ctx.fillText(arr[i], start[0], start[1])
+
+    }
+    if(i%5 === 0){
+      start[0]=100
+      start[1] +=40
+      ctx.fillText(arr[i], start[0], start[1], 10)
+
+    }
+  }
+  // ctx.fillText(bookTitle, 200, 100)
 
   font = fonts[Math.floor(Math.random()* fonts.length)]
-  ctx.font = `50px ${font}`;
-  console.log(ctx.font)
-  ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 400, 400)
+  ctx.font = `30px ${font}`
+  ctx.fillText( String.fromCharCode(Math.floor(Math.random() * 26 + 65)) +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 330, 400)
 
-  ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 400, 400)
+  blurb =  txtgen.paragraph()
+  start = [400, 50]
+  arr = blurb.split(' ')
+  ctx2.fillStyle = 'white'
+  ctx2.clearRect(0, 0, 1000, 1000)
+  ctx2.font = `30px ${font}`
+  for(let i = 1; i< arr.length; i++){
+    if(i%5 !== 0){
+      start[0]+= arr[i].length + 60
+      ctx2.fillText(arr[i], start[0], start[1])
+
+    }
+    if(i%5 === 0){
+      start[0]=400
+      start[1] +=40
+      ctx2.fillText(arr[i], start[0], start[1])
+
+    }
+  }
+  arr = blurb.split('')
+  backMaterial.uniforms.uColor.value.x = arr.filter(x =>{
+    return x === 'r' || x === 'R'
+  }).length /arr.length * 20
+
+  backMaterial.uniforms.uColor.value.y = arr.filter(x =>{
+    return x === 'g' || x === 'G'
+  }).length /arr.length * 20
+
+  backMaterial.uniforms.uColor.value.z = arr.filter(x =>{
+    return x === 'b' || x === 'B'
+  }).length /arr.length * 20
+
+
+
+  coverMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTexture)
+  backMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTextureBack)
 })
 
 
@@ -171,12 +308,28 @@ const coverMaterial  = new THREE.ShaderMaterial({
     },
     uTexture: {
       value: new THREE.CanvasTexture(textTexture)
+    },
+    uColor: {
+      value: {x: 0.1, y: 0.5, z: 1.}
     }
   },
   vertexShader: vertexShader,
   fragmentShader: fragCover,
   side: THREE.DoubleSide
 })
+
+
+coverMaterial.uniforms.uColor.value.x = bookTitle.split('').filter(x =>{
+  return x === 'r' || x === 'R'
+}).length /bookTitle.length * 10.
+
+coverMaterial.uniforms.uColor.value.y = bookTitle.split('').filter(x =>{
+  return x === 'g' || x === 'G'
+}).length /bookTitle.length * 10.
+
+coverMaterial.uniforms.uColor.value.z = bookTitle.split('').filter(x =>{
+  return x === 'b' || x === 'B'
+}).length /bookTitle.length * 10.
 
 const backMaterial  = new THREE.ShaderMaterial({
   transparent: true,
@@ -186,12 +339,35 @@ const backMaterial  = new THREE.ShaderMaterial({
     uResolution: { type: 'v2', value: new THREE.Vector2() },
     uMouse: {
       value: {x: 0.5, y: 0.5}
+    },
+    uColor: {
+      value: {x: 0.1, y: 0.5, z: 1.}
+    },
+    uTexture: {
+      value: new THREE.CanvasTexture(textTextureBack)
     }
   },
   vertexShader: vertexShader,
   fragmentShader: fragBack,
   side: THREE.DoubleSide
 })
+
+arr = blurb.split('')
+
+backMaterial.uniforms.uColor.value.x = arr.filter(x =>{
+  return x === 'r' || x === 'R'
+}).length /arr.length * 20
+
+backMaterial.uniforms.uColor.value.y = arr.filter(x =>{
+  return x === 'g' || x === 'G'
+}).length /arr.length * 20
+
+backMaterial.uniforms.uColor.value.z = arr.filter(x =>{
+  return x === 'b' || x === 'B'
+}).length /arr.length * 20
+
+
+console.log(backMaterial.uniforms.uColor.value)
 
 const spineMaterial  = new THREE.ShaderMaterial({
   transparent: true,
@@ -201,6 +377,9 @@ const spineMaterial  = new THREE.ShaderMaterial({
     uResolution: { type: 'v2', value: new THREE.Vector2() },
     uMouse: {
       value: {x: 0.5, y: 0.5}
+    },
+    uTexture: {
+      value: new THREE.CanvasTexture(textTextureSpine)
     }
   },
   vertexShader: vertexShader,
@@ -281,6 +460,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+renderer.setClearColor( 0x000000, 1.)
+
 
 const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
@@ -294,7 +475,7 @@ const intersectsArr = []
 
 
 gtlfLoader.load(
-  'book.glb',
+  'book2.glb',
   (gltf) => {
     // gltf.scene.scale.set(24.5,24.5,24.5)
     sceneGroup = gltf.scene

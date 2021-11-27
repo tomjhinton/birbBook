@@ -6,6 +6,8 @@ const float TAU = PI * 2.;
 
 uniform vec2 uResolution;
 uniform vec2 uMouse;
+uniform vec3 uColor;
+
 
 uniform sampler2D uTexture;
 
@@ -119,7 +121,7 @@ float wiggly(float cx, float cy, float amplitude, float frequency, float spread)
 
 void uvRipple(inout vec2 uv, float intensity){
 
-	vec2 p =-1.+2.*gl_FragCoord.xy / uResolution.xy-vec2(0,-.001);
+	vec2 p =-1.+2.*vUv;
 
 
     float cLength=length(p);
@@ -171,6 +173,41 @@ float cnoise(vec2 P){
   return 2.3 * n_xy;
 }
 
+vec2 brownConradyDistortion(in vec2 uv, in float k1, in float k2)
+{
+uv = uv * 2.0 - 1.0;	// brown conrady takes [-1:1]
+
+// positive values of K1 give barrel distortion, negative give pincushion
+float r2 = uv.x*uv.x + uv.y*uv.y;
+uv *= 1.0 + k1 * r2 + k2 * r2 * r2;
+
+// tangential distortion (due to off center lens elements)
+// is not modeled in this function, but if it was, the terms would go here
+
+uv = (uv * .5 + .5);	// restore -> [0:1]
+return uv;
+}
+
+// const vec2 v60 = vec2( cos(PI/3.0), sin(PI/3.0));
+//       const vec2 vm60 = vec2(cos(-PI/3.0), sin(-PI/3.0));
+//       const mat2 rot60 = mat2(v60.x,-v60.y,v60.y,v60.x);
+//       const mat2 rotm60 = mat2(vm60.x,-vm60.y,vm60.y,vm60.x);
+//
+//       float triangleGrid(vec2 p, float stepSize,float vertexSize,float lineSize)
+//       {
+//   // equilateral triangle grid
+//   vec2 fullStep= vec2( stepSize , stepSize*v60.y);
+//   vec2 halfStep=fullStep/2.0;
+//   vec2 grid = floor(p/fullStep);
+//   vec2 offset = vec2( (mod(grid.y,2.0)==1.0) ? halfStep.x : 0. , 0.);
+//   // tiling
+//   vec2 uv = mod(p+offset,fullStep)-halfStep;
+//   float d2=dot(uv,uv);
+//   return vertexSize/d2 + // vertices
+//     max( abs(lineSize/(uv*rotm60).y), // lines -60deg
+//          max ( abs(lineSize/(uv*rot60).y), // lines 60deg
+//                abs(lineSize/(uv.y)) )); // h lines
+//              }
 
 void main(){
   float alpha = 1.;
@@ -179,7 +216,7 @@ void main(){
   vec2 uvT = getRadialUv(uv -.5);
 	vec2 rote = rotateUV(uvT, vec2(.5), PI * vTime * .05);
   vec2 roteC = rotateUV(vUv, vec2(.5), -PI * vTime * .05);
-  vec2 uvT2 = getRadialUv(roteC - .5);
+  vec2 uvT2 = getRadialUv(roteC - .4);
   vec2 uvT4 = getRadialUv(rote -.5);
   // uvRipple(uvT2, .1);
 
@@ -206,28 +243,29 @@ void main(){
 
   float g2 = stroke(triangleGrid(uvT2, .2 , 0.000005,0.009), .5, .2);
 
-    float g3 = stroke(triangleGrid(rote, .1 + wiggly(uvT2.x + vTime * .005, uvT3.y + vTime * .005, 9., 3., 0.05), 0.0000005,0.009), .5, .1);
+    float g3 = stroke(triangleGrid(rote, uColor.b + wiggly(uvT2.x + vTime * .005, uvT3.y + vTime * .005, 9., 3., 0.05), uColor.r /100. ,0.009), .5, .5);
+
+  //   vec3 uColor2 = uColor;
+  // uvRipple(uColor2.rg, 1.5);
+
+  float tri = triangleGrid(uvT2, uColor.r, uColor.g/ 1000., uColor.b  );
+
+  vec3 color = vec3( 1.)  ;
 
 
-  vec3 color = vec3( uv.x, uv.y , 1.)  ;
-  // coswarp(color, 6.);
 
-  // vec3 color2 = vec3(cnoise(vec2(hex_uv2.xy) * 10.));
-  // coswarp(color2, 3.);
+  vec2 uvR = vUv - uColor.b;
+  uvRipple(uvR  , uColor.r);
 
-  // color = mix(color, 1.-color, hexf3);
-  //
-  // color = mix(color, 1.-color, hexf2);
-  // color = mix(color,  mix(1.-color, vec3(uv.y, uv.x, 1.), hexf3), box(vUv, vec2(.8), .01));
-  // color = mix(color, 1.-color, hexf2);
-  // color = mix(color, mix(1.-color, vec3(uv.x, uv.y, 1.), r), box(vUv, vec2(.4), .01));
-  // color = mix(color, 1.-color, g);
-  // color = mix(color, color2, mix(mix(mix(r, cnoise(uv * 2.), uv.x), cnoise(vUv * 2.), g3), mix(g, r, hexf3), hexf2));
-  //
-  //   color = mix(color, color2, mix(g2, mix(r, g, hexf2), hexf3));
+  // uvRipple(hex_uv3.xy, 3.);
+  color.r -= texture2D(uTexture, uvT3).r;
+  color.g -= texture2D(uTexture, uvR).r;
+  color.b -= texture2D(uTexture, uvT2).r;
+
+  // color.rb = brownConradyDistortion(color.rb, sin(vTime), cos(vTime));
 
 
-  coswarp(color ,3.);
+
 
 
   //
@@ -236,6 +274,7 @@ void main(){
   // }
 
   color = mix(color, 1.-color, tex.r);
+  // color = mix(color, 1.-color, tri);
 
 
  gl_FragColor =  vec4(color, 1.);

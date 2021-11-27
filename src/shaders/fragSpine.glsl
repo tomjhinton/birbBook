@@ -6,7 +6,7 @@ const float TAU = PI * 2.;
 
 uniform vec2 uResolution;
 uniform vec2 uMouse;
-
+uniform sampler2D uTexture;
 
 varying vec2 vUv;
 varying float vTime;
@@ -126,17 +126,28 @@ void uvRipple(inout vec2 uv, float intensity){
 
 }
 
+vec2 pMod2(inout vec2 p, vec2 size) {
+    vec2 c = floor((p + size*0.5)/size);
+    p = mod(p + size*0.5,size) - size*0.5;
+    return c;
+}
+
 
 void main(){
   float alpha = 1.;
   vec2 uv = vUv;
+    vec2 uv2 = vUv;
+
+    uv2 = pMod2(uv2, vec2(8., 8.));
+
 
   vec2 uvT = getRadialUv(uv -.5);
 	vec2 rote = rotateUV(uv, vec2(.5), PI * vTime * .05);
   vec2 roteC = rotateUV(vUv, vec2(.5), -PI * vTime * .05);
   vec2 uvT2 = getRadialUv(roteC - 1.);
     vec2 uvT4 = getRadialUv(rote -.5);
-  // uvRipple(uvT2, .1);
+  // uvRipple(uvT2, 1.1);
+
 
 
 
@@ -150,6 +161,7 @@ void main(){
 
 
   vec4 hex_uv3 = getHex(uvT3 * 2.);
+  vec4 tex = texture2D(uTexture, uv2);
 
   float hexf3 = stroke(hex(hex_uv3.xy), .1, .5 );
 
@@ -165,29 +177,19 @@ void main(){
   vec3 color = vec3(1.)  ;
 
   vec3 color2 = vec3(0.);
-  // coswarp(color2, 3.);
 
-  // color = mix(color, 1.-color, hexf3);
 
   color = mix(color, 1.-color, hexf3);
-  // color = mix(color,  mix(1.-color, vec3(uv.y, uv.x, 1.), hexf3), box(vUv, vec2(.8), .01));
+
   color = mix(color, 1.-color, hexf2);
-  // color = mix(color, mix(1.-color, vec3(uv.x, uv.y, 1.), r), box(vUv, vec2(.4), .01));
+
   color = mix(color, 1.-color, g);
   color = mix(color, 1.-color, mix(g3, r, hexf2));
 
-
-  // coswarp(color ,10.);
-
-
-  //
-  // if(color == vec3(0)){
-  //   color = color2;
-  // }
+  // color= mix(color, tex.rgb, .1);
 
 
 
-
- gl_FragColor =  vec4(color, 1.);
+ gl_FragColor = vec4(color, 1.) ;
 
 }

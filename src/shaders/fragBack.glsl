@@ -3,7 +3,8 @@ const float PI = 3.1415926535897932384626433832795;
 const float TAU = PI * 2.;
 uniform vec2 uResolution;
 uniform vec2 uMouse;
-
+uniform sampler2D uTexture;
+uniform vec3 uColor;
 
 varying vec2 vUv;
 varying float vTime;
@@ -102,7 +103,7 @@ vec2 barrelPincushion(vec2 uv, float k) {
 void main(){
   const int one = 1;
   float alpha = 1.;
-  vec2 uv = vUv - .5;
+  vec2 uv = vUv;
 
   float effectRadius = 1.5;
   float effectAngle = 1. * PI ;
@@ -193,14 +194,18 @@ void main(){
         }
     }
 
-    color.r = dot(m_point,vec2(.3,.2));
-    color.g = dot(m_point2,vec2(.3,.2));
-    color.b = dot(m_point3,vec2(.3,.2));
-    color.rg = barrelPincushion(color.rg, 3. * sin(vTime));
+    // color.r = dot(m_point,vec2(.3,.2));
+    // color.g = dot(m_point2,vec2(.3,.2));
+    // color.b = dot(m_point3,vec2(.3,.2));
 
+
+
+    uv.y = 1. - uv.y;
+    vec4 tex = texture2D(uTexture, uv);
+    color = uColor * uv.x;
+    // color.rg = barrelPincushion(color.rg, 3. * sin(vTime));
     coswarp(color, 3.);
-
-
+    color = mix(color, 1.-color, tex.r);
 
 
  gl_FragColor =  vec4(color, alpha);
