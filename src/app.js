@@ -14,7 +14,6 @@ let bookTitle = txtgen.sentence()
 let author =  txtgen.getNouns()
 
 let blurb =  txtgen.paragraph()
-// console.log(author[Math.floor(Math.random() * author.length)])
 
 
 const canvas = document.querySelector('canvas.webgl')
@@ -53,11 +52,7 @@ fontsL.map(x =>{
 
 
 const scene = new THREE.Scene()
-// fontsL.map(x => {
-//
-// })
 
-console.log(document.fonts)
 
 const canvasCover = document.createElement('canvas')
 canvasCover.id = 'textBoxCover'
@@ -81,16 +76,10 @@ ctx.fillText(bookTitle, 200, 100)
 
 font = fonts[Math.floor(Math.random()* fonts.length)]
 ctx.font = `30px ${font}`
-console.log(ctx.font)
 
-// ctx.textAlign =  "center" ;
-// ctx.textBaseline =  "middle"
 
 
 ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 330, 400)
-
-
-
 
 
 
@@ -113,7 +102,7 @@ ctx2.font = `40px ${fonts[Math.floor(Math.random()* fonts.length)]}`
 if(font === 'Tapeworm' || font === 'ferrite'){
   ctx2.font = '40px ' + font
 }
-// ctx2.scale(-1,1);
+
 let start = [400, 50]
 let arr = blurb.split(' ')
 for(let i = 1; i< arr.length; i++){
@@ -147,18 +136,54 @@ wrapDiv.classList.add('x')
 canvasSpine.classList.add('y')
 // canvasSpine.style.position= 'absolute'
 
-
 const textTextureSpine = document.getElementById('textBoxSpine')
 let base_image = new Image(100, 100);
 base_image.src = './birb.png';
 let ctx3 = canvasSpine.getContext('2d')
 
 
+
 base_image.onload = function(){
-  ctx3.scale(.5, .5);
-  ctx3.drawImage(base_image, 0, 0);
+  ctx3.scale(.5, .5)
+  ctx3.drawImage(base_image, 0, 0)
 
   spineMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTextureSpine)
+  console.log(controls.target)
+
+  console.log(document.body.style)
+
+  textTextureSpine.addEventListener('click', function (e) {
+
+    // gsap.to(sceneGroup.rotation, {
+    //   duration: 3,
+    //   z: sceneGroup.rotation.z - 3.5
+    // })
+
+    const color = {
+      r: Math.random() * 255,
+      g: Math.random() * 255,
+      b: Math.random() * 255
+    }
+
+    const color2 = {
+      r: Math.random() * 255,
+      g: Math.random() * 255,
+      b: Math.random() * 255
+    }
+
+
+    document.body.style.backgroundImage = `
+    linear-gradient(rgba(${color.r}, ${color.g}, ${color.b}, .7)  .1em, transparent .2em), linear-gradient(90deg, rgba(${color2.r}, ${color2.g}, ${color2.b}, .7) .1em, transparent .2em)
+    `
+
+
+
+    //
+    // controls.target.set(sceneGroup.position.x, sceneGroup.position.y, sceneGroup.position.z)
+    // // camera.lookAt(sceneGroup.position)
+    // controls.update()
+  })
+
 }
 
 
@@ -380,7 +405,6 @@ backMaterial.uniforms.uColor.value.z = arr.filter(x =>{
 }).length /arr.length * 20
 
 
-console.log(backMaterial.uniforms.uColor.value)
 
 const spineMaterial  = new THREE.ShaderMaterial({
   transparent: true,
@@ -540,7 +564,9 @@ const tick = () =>{
 
 
   // Update controls
+
   controls.update()
+
 
 
 

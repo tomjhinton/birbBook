@@ -35,7 +35,7 @@
   top: 10%;
   left: 5%;
   // justify-content: center;
-  width: 100%;
+  width: 40%;
   height: 20px;
   z-index: 1;
   cursor: pointer;
@@ -142,8 +142,8 @@
 body {
   margin: 0;
   padding: 0;
-
-  width: 100%;
+  // overflow-x: hidden;
+  width: 100vw;
   height: 100vh;
 
   background: #000;
@@ -183,18 +183,19 @@ $size: 50px;
 .x {
   // transform: scale(0.5);
   position: absolute;
-  z-index: -1;
   top: 0%;
+  left: 0%;
   animation: x 26s linear infinite alternate;
 }
 
 .y {
   // transform: scale(0.3);
+  cursor: crosshair;
   position: absolute;
-  z-index: -1;
   top: 0%;
-  left: 10%;
+  left: 0%;
   animation: y 14s linear infinite alternate;
+  opacity: 30%;
 }
 
 @keyframes x {
