@@ -100,14 +100,6 @@ vec4 getHex(vec2 p){
  }
 
 
- float box(vec2 _st, vec2 _size, float _smoothEdges){
-    _size = vec2(0.5)-_size*0.5;
-    vec2 aa = vec2(_smoothEdges*0.5);
-    vec2 uv = smoothstep(_size,_size+aa,_st);
-    uv *= smoothstep(_size,_size+aa,vec2(1.0)-_st);
-    return uv.x*uv.y;
-}
-
 float wiggly(float cx, float cy, float amplitude, float frequency, float spread){
 
   float w = sin(cx * amplitude * frequency * PI) * cos(cy * amplitude * frequency * PI) * spread;
@@ -115,16 +107,7 @@ float wiggly(float cx, float cy, float amplitude, float frequency, float spread)
   return w;
 }
 
-void uvRipple(inout vec2 uv, float intensity){
 
-	vec2 p =-1.+2.*gl_FragCoord.xy / uResolution.xy-vec2(0,-.001);
-
-
-    float cLength=length(p);
-
-     uv= uv +(p/cLength)*cos(cLength*15.0-vTime*1.0)*intensity;
-
-}
 
 vec2 pMod2(inout vec2 p, vec2 size) {
     vec2 c = floor((p + size*0.5)/size);
@@ -136,60 +119,38 @@ vec2 pMod2(inout vec2 p, vec2 size) {
 void main(){
   float alpha = 1.;
   vec2 uv = vUv;
-    vec2 uv2 = vUv;
-
-    uv2 = pMod2(uv2, vec2(8., 8.));
-
+  vec2 uv2 = vUv;
+  uv2 = pMod2(uv2, vec2(8., 8.));
 
   vec2 uvT = getRadialUv(uv -.5);
 	vec2 rote = rotateUV(uv, vec2(.5), PI * vTime * .05);
   vec2 roteC = rotateUV(vUv, vec2(.5), -PI * vTime * .05);
   vec2 uvT2 = getRadialUv(roteC - 1.);
-    vec2 uvT4 = getRadialUv(rote -.5);
-  // uvRipple(uvT2, 1.1);
-
-
-
-
+  vec2 uvT4 = getRadialUv(rote -.5);
 
 
   vec4 hex_uv2 = getHex(uvT2 * 5.);
-
   vec2 uvT3 = getRadialUv(hex_uv2.xy -.5);
-
   float hexf2 = stroke(hex(hex_uv2.xy), .5, .3);
-
-
   vec4 hex_uv3 = getHex(uvT3 * 2.);
-  vec4 tex = texture2D(uTexture, uv2);
-
   float hexf3 = stroke(hex(hex_uv3.xy), .1, .5 );
 
 	float r = fill(triangleGrid(rote, 0.1 , 0.00005,0.001), .2);
 
   float g = stroke(triangleGrid(uvT4, .2 , 0.0000005, 0.009), .5, 1.);
 
-  float g2 = stroke(triangleGrid(uvT2, .1 , 0.0005,0.009), .5, .2);
 
-    float g3 = stroke(triangleGrid(rote, .5 + wiggly(uvT2.x + vTime * .005, uvT3.y + vTime * .005, 9., 3., 0.05), 0.0000005,0.009), .5, .1);
+  float g3 = stroke(triangleGrid(rote, .5 + wiggly(uvT2.x + vTime * .005, uvT3.y + vTime * .005, 9., 3., 0.05), 0.0000005,0.009), .5, .1);
 
 
-  vec3 color = vec3(1.)  ;
-
-  vec3 color2 = vec3(0.);
-
+  vec3 color = vec3(1.);
 
   color = mix(color, 1.-color, hexf3);
-
   color = mix(color, 1.-color, hexf2);
-
   color = mix(color, 1.-color, g);
   color = mix(color, 1.-color, mix(g3, r, hexf2));
 
-  // color= mix(color, tex.rgb, .1);
 
-
-
- gl_FragColor = vec4(color, 1.) ;
+ gl_FragColor = vec4(color, 1.)  ;
 
 }

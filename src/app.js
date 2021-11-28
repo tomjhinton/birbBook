@@ -505,11 +505,6 @@ const mouse = new THREE.Vector2()
 
 let sceneGroup, cover, pages, spine, back
 
-const intersectsArr = []
-
-
-
-
 
 gtlfLoader.load(
   'book2.glb',
