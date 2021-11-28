@@ -77,8 +77,6 @@ ctx.fillText(bookTitle, 200, 100)
 font = fonts[Math.floor(Math.random()* fonts.length)]
 ctx.font = `30px ${font}`
 
-
-
 ctx.fillText( bookTitle.charAt(Math.floor(Math.random() * bookTitle.length)).toUpperCase() +' . ' +author[Math.floor(Math.random() * author.length)].toUpperCase(), 330, 400)
 
 
@@ -94,14 +92,11 @@ document.body.appendChild(canvasBack)
 
 const textTextureBack = document.getElementById('textBoxBack')
 
-let ctx2 = canvasBack.getContext('2d')
+const ctx2 = canvasBack.getContext('2d')
 ctx2.fillStyle = 'white'
 font  = fonts[Math.floor(Math.random()* fonts.length)]
 
 ctx2.font = `40px ${fonts[Math.floor(Math.random()* fonts.length)]}`
-if(font === 'Tapeworm' || font === 'ferrite'){
-  ctx2.font = '40px ' + font
-}
 
 let start = [400, 50]
 let arr = blurb.split(' ')
@@ -148,9 +143,6 @@ base_image.onload = function(){
   ctx3.drawImage(base_image, 0, 0)
 
   spineMaterial.uniforms.uTexture.value = new THREE.CanvasTexture(textTextureSpine)
-  console.log(controls.target)
-
-  console.log(document.body.style)
 
   textTextureSpine.addEventListener('click', function (e) {
 
@@ -207,11 +199,11 @@ document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
   coverMaterial.uniforms.uColor.value.z = bookTitle.split('').filter(x =>{
     return x === 'b' || x === 'B'
   }).length /bookTitle.length * 10.
-  console.log('cover ' + coverMaterial.uniforms.uColor)
+
   start = [100, 50]
   arr = bookTitle.split(' ')
   ctx.font = `30px ${font}`;
-  console.log(ctx.font)
+
   for(let i = 0; i< arr.length; i++){
     if(i%5 !== 0){
       start[0]+= 70 +arr[i-1].length
@@ -463,9 +455,6 @@ window.addEventListener('resize', () =>{
 
 })
 
-
-
-
 /**
  * Camera
  */
@@ -475,8 +464,6 @@ camera.position.x = -5
 camera.position.y = 20
 camera.position.z = 15
 scene.add(camera)
-
-
 
 
 // Controls
@@ -509,10 +496,8 @@ let sceneGroup, cover, pages, spine, back
 gtlfLoader.load(
   'book2.glb',
   (gltf) => {
-    // gltf.scene.scale.set(24.5,24.5,24.5)
     sceneGroup = gltf.scene
     sceneGroup.needsUpdate = true
-    // sceneGroup.position.y -= 4.5
     scene.add(sceneGroup)
 
     cover = gltf.scene.children.find((child) => {
@@ -556,14 +541,9 @@ const tick = () =>{
     x.uniforms.uTime.value = elapsedTime
   })
 
-
-
   // Update controls
 
   controls.update()
-
-
-
 
   // Render
   renderer.render(scene, camera)

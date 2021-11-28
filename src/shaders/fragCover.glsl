@@ -21,16 +21,6 @@ float stroke(float x, float s, float w){
 }
 
 
-void coswarp(inout vec3 trip, float warpsScale ){
-
-  trip.xyz += warpsScale * .1 * cos(3. * trip.yzx + (vTime * .25));
-  trip.xyz += warpsScale * .05 * cos(11. * trip.yzx + (vTime * .25));
-  trip.xyz += warpsScale * .025 * cos(17. * trip.yzx + (vTime * .25));
-}
-
-
-
-
 vec2 getRadialUv(vec2 uv) {
 	float angle = atan(uv.x, -uv.y);
 	angle = abs(angle);
@@ -40,22 +30,6 @@ vec2 getRadialUv(vec2 uv) {
 	return radialUv;
 }
 
-
-float triangleGrid(vec2 p, float stepSize,float vertexSize,float lineSize)
-{
-    // equilateral triangle grid
-    vec2 fullStep= vec2( stepSize , stepSize*v60.y);
-    vec2 halfStep=fullStep/2.0;
-    vec2 grid = floor(p/fullStep);
-    vec2 offset = vec2( (mod(grid.y,2.0)==1.0) ? halfStep.x : 0. , 0.);
-   	// tiling
-    vec2 uv = mod(p+offset,fullStep)-halfStep;
-    float d2=dot(uv,uv);
-    return vertexSize/d2 + // vertices
-    	max( abs(lineSize/(uv*rotm60).y), // lines -60deg
-        	 max ( abs(lineSize/(uv*rot60).y), // lines 60deg
-        	  	   abs(lineSize/(uv.y)) )); // h lines
-}
 
 vec2 rotateUV(vec2 uv, vec2 pivot, float rotation) {
   mat2 rotation_matrix=mat2(  vec2(sin(rotation),-cos(rotation)),
@@ -121,7 +95,7 @@ void main(){
   float hexf3 = stroke(hex(hex_uv3.xy * uColor.b),uColor.g, uColor.r );
 
 
-  float tri = triangleGrid(uvT2, uColor.r, uColor.g/ 1000., uColor.b  );
+
 
   vec3 color = vec3( 1.)  ;
 
